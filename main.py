@@ -1,11 +1,11 @@
-from core.models import Route
+from core.models.route import Route
 from core.io_utils import read_cities
 from algorithms.sa import simulated_annealing
 from ui.visualizer import plot_progress
 import tkinter as tk
 
 def main():
-    cities = read_cities("berlin52.txt")
+    cities = read_cities("data/berlin52.txt")
     initial_route = Route(cities)
     initial_route.calculate_distance()
 
