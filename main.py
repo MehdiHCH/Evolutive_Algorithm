@@ -1,6 +1,6 @@
 from core.models import Route
 from core.io_utils import read_cities
-from core.algorithms import simulated_annealing
+from algorithms.sa import simulated_annealing
 from ui.visualizer import plot_progress
 import tkinter as tk
 
