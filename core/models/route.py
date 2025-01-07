@@ -1,17 +1,20 @@
-import math
+from core.models.base_route import BaseRoute
 
-class Route:
-    def __init__(self, cities=None):
-        self.cities = cities if cities else []
-        self.distance = 0.0
-
-    def calculate_distance(self):
-        total_distance = 0.0
-        num_cities = len(self.cities)
-        for i in range(num_cities):
-            current_city = self.cities[i]
-            next_city = self.cities[(i + 1) % num_cities]
-            dx = current_city.x - next_city.x
-            dy = current_city.y - next_city.y
-            total_distance += math.sqrt(dx**2 + dy**2)
-        self.distance = total_distance
+class Route(BaseRoute):
+    """Main Route class implementing the neighbor generation using 2-opt"""
+    
+    def get_neighbor(self):
+        """
+        Generate a neighbor using 2-opt swap.
+        
+        Returns:
+            New Route object with the best 2-opt swap applied
+        """
+        from core.tsp_utils import SuccesseurtwoOpt
+        
+        best_cities = SuccesseurtwoOpt(self)
+        if best_cities:
+            return self.__class__(best_cities)
+        return None
+        """Return a string representation of the route."""
+        return f"Route(cities={len(self.cities)}, distance={self.distance:.2f})"

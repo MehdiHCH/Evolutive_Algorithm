@@ -1,23 +1,40 @@
 import random
 import math
+from typing import List
 from core.models.route import Route
-from core.tsp_utils import SuccesseurtwoOpt
+from algorithms.base import TSPAlgorithm
 
-def simulated_annealing(initial_route, cooling_rate=0.93, Tstop=1e-8):
-    current_route = initial_route
-    best_route = Route(current_route.cities[:])
-    best_route.calculate_distance()
+class SimulatedAnnealing(TSPAlgorithm):
+    def __init__(self, initial_temp=1000, cooling_rate=0.995, min_temp=1e-8, 
+                 progress_callback=None):
+        super().__init__(progress_callback)
+        self.initial_temp = initial_temp
+        self.cooling_rate = cooling_rate
+        self.min_temp = min_temp
+    
+    def optimize(self, initial_route: Route) -> Route:
+        current_route = initial_route.copy()
+        best_route = current_route.copy()
+        temp = self.initial_temp
+        
+        iteration = 1
+        while temp > self.min_temp or iteration > self.progress_callback.total_iterations:
+            new_route = current_route.get_neighbor()
+            delta = new_route.distance - current_route.distance
+            
+            if delta < 0 or random.random() < math.exp(-delta / temp):
+                current_route = new_route
+                if current_route.distance < best_route.distance:
+                    best_route = current_route.copy()
+            
+            self.update_progress(
+                current_route=current_route,
+                temperature=temp,
+                best_distance=best_route.distance
+            )
+            
+            temp *= self.cooling_rate
 
-    temperature = -initial_route.distance / math.log(0.5)
-    while temperature > Tstop:
-        neighbor_route = SuccesseurtwoOpt(current_route)
-        if neighbor_route:
-            delta = neighbor_route.distance - current_route.distance
-            if delta < 0 or math.exp(-delta / temperature) > random.random():
-                current_route = neighbor_route
-                if neighbor_route.distance < best_route.distance:
-                    best_route = Route(neighbor_route.cities[:])
-                    best_route.calculate_distance()
-        temperature *= cooling_rate
-
-    return best_route
+            iteration += 1
+        
+        return best_route
