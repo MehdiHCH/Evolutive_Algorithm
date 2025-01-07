@@ -1,4 +1,4 @@
-from .models import City
+from .models.city import City
 
 def read_cities(filename):
     cities = []
