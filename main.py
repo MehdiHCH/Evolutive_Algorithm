@@ -2,9 +2,9 @@ import argparse
 from typing import Optional
 from core.models.route import Route
 from core.io_utils import read_cities
-from algorithms.base import TSPAlgorithm
 from algorithms.sa import SimulatedAnnealing
 from algorithms.ga import GeneticAlgorithm
+from algorithms.es import EvolutionStrategy
 from ui.progress_tracker import ProgressTracker
 from ui.desktop_ui import visualize_desktop_ui
 from ui.web_ui import launch_web_ui
@@ -28,12 +28,12 @@ def run_ui(ui_type: str, best_route: Optional[Route] = None) -> None:
     else:
         print(f"UI Type '{ui_type}' not supported. Available options: desktop, web, console.")
 
-def get_algorithm(algorithm_type: str, progress_tracker: ProgressTracker) -> TSPAlgorithm:
+def get_algorithm(algorithm_type: str, progress_tracker: ProgressTracker):
     """
     Factory function to create the appropriate algorithm instance.
     
     Args:
-        algorithm_type: Type of algorithm to create ('sa' or 'ga')
+        algorithm_type: Type of algorithm to create ('sa', 'ga', or 'es')
         progress_tracker: Progress tracker instance for UI updates
         
     Returns:
@@ -54,6 +54,14 @@ def get_algorithm(algorithm_type: str, progress_tracker: ProgressTracker) -> TSP
             mutation_rate=0.01,
             progress_callback=progress_tracker
         )
+    elif algorithm_type == "es":
+        return EvolutionStrategy(
+            population_size=50,
+            offspring_size=100,
+            mutation_rate=0.2,
+            max_generations=1000,
+            progress_callback=progress_tracker
+        )
     else:
         raise ValueError(f"Algorithm type '{algorithm_type}' not supported")
 
@@ -62,8 +70,8 @@ def main():
     parser = argparse.ArgumentParser(description="Solve TSP using various algorithms")
     parser.add_argument(
         "--algorithm", type=str, default="sa",
-        choices=["sa", "ga"],
-        help="Algorithm to use: 'sa' (Simulated Annealing) or 'ga' (Genetic Algorithm)"
+        choices=["sa", "ga", "es"],
+        help="Algorithm to use: 'sa' (Simulated Annealing), 'ga' (Genetic Algorithm), or 'es' (Evolution Strategy)"
     )
     parser.add_argument(
         "--ui", type=str, default="console",
