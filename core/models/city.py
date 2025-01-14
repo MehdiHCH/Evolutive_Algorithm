@@ -2,6 +2,7 @@ import math
 from typing import List, Optional, TextIO
 from dataclasses import dataclass
 from pathlib import Path
+from core.utils import haversine_distance
 
 @dataclass
 class City:
@@ -32,7 +33,7 @@ class City:
         """
         return cls(ID=ID, x=x, y=y)
 
-    def distance(self, other_city: 'City') -> float:
+    def distance(self, other_city: 'City', type="haversine") -> float:
         """
         Calculates the Euclidean distance between this city and another.
         
@@ -42,8 +43,11 @@ class City:
         Returns:
             The Euclidean distance between the cities
         """
-        return math.sqrt((self.x - other_city.x) ** 2 + (self.y - other_city.y) ** 2)
-
+        if type == "euclidean":
+            return math.sqrt((self.x - other_city.x) ** 2 + (self.y - other_city.y) ** 2)
+        elif type == "haversine":
+            return haversine_distance(self.x, self.y, other_city.x, other_city.y)
+    
     def manhattan_distance(self, other_city: 'City') -> float:
         """
         Calculates the Manhattan distance between this city and another.

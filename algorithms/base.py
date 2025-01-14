@@ -18,7 +18,7 @@ class TSPAlgorithm(ABC):
         """Update progress through callback"""
         if self.progress_callback:
             self.iteration += 1
-            self.progress_callback(
+            return self.progress_callback(
                 iteration=self.iteration,
                 current_route=current_route,
                 **kwargs

@@ -1,0 +1,22 @@
+{
+    "data_path": "data/maroc.txt",
+    "random_init": true,
+    "total_iterations": 1e3,
+    "sa": {
+        "initial_temp": 1000,
+        "cooling_rate": 0.995,
+        "min_temp": 1e-8
+    },
+    "ga": {
+        "population_size": 1000,
+        "generations": 1000,
+        "elite_size": 10,
+        "mutation_rate": 0.02
+    },
+    "es": {
+        "population_size": 50,
+        "offspring_size": 100,
+        "mutation_rate": 0.2,
+        "max_generations": 1000
+    }
+}

@@ -10,3 +10,13 @@ def read_cities(filename):
             x, y = map(float, line[1:])
             cities.append(City(ID, x, y))
     return cities
+
+
+def save_cities(filename, coords):
+    with open(filename, "w+") as file:
+        num_cities = len(coords)
+        file.write(f"{num_cities}\n")
+        for idx, x, y in coords:
+            line = f"{idx} {x} {y}"
+            file.write(f"{line}\n")
+

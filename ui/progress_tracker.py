@@ -1,4 +1,4 @@
-from typing import Optional, Dict, Any
+from typing import Optional
 from tqdm import tqdm
 from ui.desktop_ui import visualize_desktop_ui
 from ui.web_ui import launch_web_ui
@@ -54,6 +54,7 @@ class ProgressTracker:
         # Update UI based on type
         if self.ui_type == "desktop":
             self._update_desktop(**progress_info)
+            return self.desktop_window
         elif self.ui_type == "web":
             self._update_web(**progress_info)
         elif self.ui_type == "console":

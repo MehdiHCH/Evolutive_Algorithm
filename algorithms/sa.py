@@ -17,8 +17,7 @@ class SimulatedAnnealing(TSPAlgorithm):
         best_route = current_route.copy()
         temp = self.initial_temp
         
-        iteration = 1
-        while temp > self.min_temp or iteration > self.progress_callback.total_iterations:
+        while temp > self.min_temp and self.iteration <= self.progress_callback.total_iterations:
             new_route = current_route.get_neighbor()
             delta = new_route.distance - current_route.distance
             
@@ -27,7 +26,7 @@ class SimulatedAnnealing(TSPAlgorithm):
                 if current_route.distance < best_route.distance:
                     best_route = current_route.copy()
             
-            self.update_progress(
+            desktop_window = self.update_progress(
                 current_route=current_route,
                 temperature=temp,
                 best_distance=best_route.distance
@@ -35,6 +34,6 @@ class SimulatedAnnealing(TSPAlgorithm):
             
             temp *= self.cooling_rate
 
-            iteration += 1
+            self.iteration += 1
         
-        return best_route
+        return best_route, desktop_window

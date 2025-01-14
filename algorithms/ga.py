@@ -34,6 +34,9 @@ class GeneticAlgorithm(TSPAlgorithm):
                         mutation_rate=self.mutation_rate,
                         best_distance=best_route.distance
                     )
+
+                    if generation > self.progress_callback.total_iterations - 1:
+                        break
                 except Exception as e:
                     print(f"Error during generation {generation}: {str(e)}")
 
@@ -69,7 +72,7 @@ class GeneticAlgorithm(TSPAlgorithm):
                     parent2 = random.choice(population)
                     child = self._crossover(parent1, parent2)
                     if random.random() < self.mutation_rate:
-                        child.mutate()
+                        self.mutate(child)
                     new_population.append(child)
                 except Exception as e:
                     print(f"Error during crossover or mutation: {str(e)}")

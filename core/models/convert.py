@@ -1,4 +1,5 @@
-from math import math
+import math
+
 
 def convert(La,Lo):
     fi0=sum(La)/len(La)
@@ -13,7 +14,7 @@ def convert(La,Lo):
     return x,y 
 
 
-import math
+
 
 def convert_to_cartesian(data, phi0=0, lambda0=0, R=6371):
     """
@@ -50,3 +51,4 @@ def convert_to_cartesian(data, phi0=0, lambda0=0, R=6371):
             cartesian_coords.append((index, x, y))
 
     return cartesian_coords
+
