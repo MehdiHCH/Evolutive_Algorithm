@@ -5,7 +5,14 @@ from matplotlib.figure import Figure
 from core.utils import get_scale, spherical_to_cartesian
 from typing import Optional
 from tqdm import tqdm
+from itertools import cycle
 
+colors = cycle(["blue", "red", "green", "purple", "orange", "brown"])
+iterations_list = []
+distances_list = []
+best_distances_list = []
+color_list = []
+algorithm_list = []
 
 class TSPVisualizerWindow:
     def __init__(self, route, algorithms, total_iterations):
@@ -17,6 +24,7 @@ class TSPVisualizerWindow:
             algorithms (dict): Dictionary of algorithms with their classes and default parameters.
             total_iterations (int): Total number of iterations for progress tracking.
         """
+        # self.name_algorithm = name_algorithm
         self.route = route
         self.algorithms = algorithms
         self.canvas_size = (700, 750)
@@ -28,7 +36,7 @@ class TSPVisualizerWindow:
         self.offset_y = self.canvas_size[1] * 0.05
 
         self.total_iterations = total_iterations
-
+        
         # Initialize the window
         self.root = tk.Tk()
         self.root.title("TSP Optimization Visualization")
@@ -144,7 +152,7 @@ class TSPVisualizerWindow:
         """Start the optimization process."""
         algorithm_name = self.selected_algorithm.get()
         algorithm_class = self.algorithms[algorithm_name]["class"]
-
+        algorithm_list.append(algorithm_name)
         # Parse parameters
         params = {}
         for param, var in self.parameters_vars.items():
@@ -213,7 +221,7 @@ class TSPVisualizerWindow:
         self.canvas_size = (event.width, event.height)
         self.draw_route(self.route)
 
-    def update_progress(self, progress_info):
+    def update_progress(self, progress_info, color):
         """Update progress information during optimization."""
         current_route = progress_info["current_route"]
         if current_route is None:
@@ -222,6 +230,16 @@ class TSPVisualizerWindow:
         iteration = progress_info.get("iteration", 0)
         current_distance = current_route.distance
         best_distance = progress_info.get("best_distance", current_distance)
+
+        if iteration == 1:
+            # algorithm_list.append(self.name_algorithm)
+            iterations_list.append(list(self.iterations))
+            distances_list.append(list(self.distances))
+            best_distances_list.append(list(self.best_distances))
+            color_list.append(color)
+            self.iterations.clear()
+            self.distances.clear()
+            self.best_distances.clear()
 
         # Update route visualization
         self.draw_route(current_route)
@@ -237,8 +255,16 @@ class TSPVisualizerWindow:
         self.best_distances.append(best_distance)
 
         self.ax.clear()
-        self.ax.plot(self.iterations, self.distances, "b-", label="Current Distance")
-        self.ax.plot(self.iterations, self.best_distances, "r-", label="Best Distance")
+        
+        if iteration == 1:
+            self.ax.cla()
+        for i in range(len(iterations_list)):
+            if iterations_list[i]:
+                self.ax.plot(iterations_list[i], distances_list[i], color=color_list[i], label=algorithm_list[i-1])
+
+        self.ax.plot(self.iterations, self.distances, color=color, label=algorithm_list[-1])
+
+        
         self.ax.set_xlabel("Iteration")
         self.ax.set_ylabel("Distance")
         self.ax.legend()
@@ -255,7 +281,7 @@ class ProgressTracker:
         self.desktop_window = desktop_window
         self.total_iterations = total_iterations
         self.best_distance = float("inf")
-
+        self.color = next(colors)
         # Initialize progress bar if total iterations is known
         if self.total_iterations:
             self.progress_bar = tqdm(
@@ -271,7 +297,7 @@ class ProgressTracker:
         """
         current_route = progress_info["current_route"]
         iteration = progress_info.get("iteration", 0)
-
+        
         if self.progress_bar:
             self.progress_bar.n = iteration
             self.progress_bar.set_description(f"Current Distance: {current_route.distance:.2f}")
@@ -280,7 +306,11 @@ class ProgressTracker:
         if "best_distance" in progress_info:
             self.best_distance = min(self.best_distance, progress_info["best_distance"])
 
-        self.desktop_window.update_progress(progress_info)
+        self.desktop_window.update_progress(progress_info, self.color)
+        if iteration == 1:
+            self.color = next(colors)
+            
+
 
     def close(self):
         """Clean up resources."""
