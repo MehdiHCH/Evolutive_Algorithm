@@ -6,6 +6,7 @@ from algorithms.sa import SimulatedAnnealing
 from algorithms.ga import GeneticAlgorithm
 from algorithms.es import EvolutionStrategy
 from ui.progress_tracker import ProgressTracker
+from algorithms.aco import Colony
 from ui.desktop_ui import visualize_desktop_ui
 from ui.web_ui import launch_web_ui
 from ui.console_ui import visualize_console_ui
@@ -62,6 +63,10 @@ def get_algorithm(algorithm_type: str, progress_tracker: ProgressTracker):
             max_generations=1000,
             progress_callback=progress_tracker
         )
+    elif algorithm_type == "aco":
+        return Colony(
+            progress_callback=progress_tracker
+        )
     else:
         raise ValueError(f"Algorithm type '{algorithm_type}' not supported")
 
@@ -70,7 +75,7 @@ def main():
     parser = argparse.ArgumentParser(description="Solve TSP using various algorithms")
     parser.add_argument(
         "--algorithm", type=str, default="sa",
-        choices=["sa", "ga", "es"],
+        choices=["sa", "ga", "es", "aco"],
         help="Algorithm to use: 'sa' (Simulated Annealing), 'ga' (Genetic Algorithm), or 'es' (Evolution Strategy)"
     )
     parser.add_argument(

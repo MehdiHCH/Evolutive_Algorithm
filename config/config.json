@@ -12,11 +12,14 @@
         "generations": 1000,
         "elite_size": 10,
         "mutation_rate": 0.02
-    },
+        },
     "es": {
         "population_size": 50,
         "offspring_size": 100,
         "mutation_rate": 0.2,
         "max_generations": 1000
+    },
+    "aco": {
+        "num_ants": 50
     }
 }

@@ -7,6 +7,7 @@ from ui.desktop_ui_full import visualize_desktop_ui  # Import the new UI
 from algorithms.sa import SimulatedAnnealing
 from algorithms.ga import GeneticAlgorithm
 from algorithms.es import EvolutionStrategy
+from algorithms.aco import Colony
 
 
 # Définitions des paramètres par défaut
@@ -30,7 +31,11 @@ DEFAULT_CONFIG = {
         "offspring_size": 100,
         "mutation_rate": 0.2,
         "max_generations": 1000
+    },
+    "aco": {
+        "num_ants": 50
     }
+
 }
 
 
@@ -75,6 +80,10 @@ def get_algorithm_classes(config: dict = None):
         "Evolution Strategy": {
             "class": EvolutionStrategy,
             "params": algorithms_config["es"]
+        },
+        "Ant Colony": {
+            "class": Colony,
+            "params": algorithms_config["aco"]
         }
     }
 
@@ -105,7 +114,7 @@ def main():
         visualize_desktop_ui(
             route=initial_route,
             algorithms=algorithm_classes,
-            total_iterations = config["total_iterations"]
+            total_iterations = config["total_iterations"],
         )
 
     except Exception as e:
